@@ -78,8 +78,7 @@ int main(int argc, char *argv[])
     { 
         for (int c = 0; c < schematic[r].size(); c++) 
         {
-
-            if (schematic[r][c] != '.' && !isdigit(schematic[r][c]))
+            if (schematic[r][c] == '*')
             {
                 cout << "-------------------"<<endl;
                 cout << "\t schematic["<< r <<"]["<<c<<"]: "<< schematic[r][c] << endl;
@@ -88,6 +87,8 @@ int main(int argc, char *argv[])
                    r,c-1  |r,c  |r,c+1
                    r+1,c-1|r+1,c|r+1,c+1
                 */
+               int foundCount = 0;
+               long ratio = 1;
                 for (int newIndex = 0; newIndex < 8; newIndex++)
                 {
                     int newRow = r+newRowArray[newIndex];
@@ -102,10 +103,15 @@ int main(int argc, char *argv[])
                             if (isdigit(schematic[newRow][newCol])){
                                 int theNumber = extractNumber(newRow, newCol, true);
                                 cout << "\t" << theNumber << endl;
-                                sum += theNumber;
+                                
+                                foundCount++;
+                                ratio *= theNumber;
                             }
                         }
                     }
+                }
+                if (foundCount == 2){
+                    sum += ratio;
                 }
                 cout << "-------------------"<<endl;
             }
