@@ -1,4 +1,4 @@
-seeds: 79 
+seeds: 55 13
 
 seed-to-soil map:
 52 50 48
@@ -29,4 +29,4 @@ temperature-to-humidity map:
 
 humidity-to-location map:
 60 56 37
-56 93 4
+0 93 4
