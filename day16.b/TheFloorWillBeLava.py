@@ -1,4 +1,3 @@
-from os import walk
 import sys
 import time
 
