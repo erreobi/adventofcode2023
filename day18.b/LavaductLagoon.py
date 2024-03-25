@@ -15,7 +15,7 @@ def stampa_matrice(matrice):
             print(riga)
 
 
-istructionsDirectionMap = {"R": (1, 0), "D": (0, 1), "L": (-1, 0), "U": (0, -1)}
+istructionsDirectionMap = {0: (1, 0), 1: (0, 1), 2: (-1, 0), 3: (0, -1)}
 
 
 def main():
@@ -37,7 +37,7 @@ def main():
         print(istructions)
 
         numberSteps = int(istructions[2][2:-2], 16)
-        directionsInt = int(istructions[2][-2:])
+        directionsInt = int(istructions[2][-2:-1])
         directions = istructionsDirectionMap[directionsInt]
 
         print(f"Dir: {directions} Steps: {numberSteps}")
