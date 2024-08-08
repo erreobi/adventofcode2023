@@ -26,8 +26,8 @@ class Module:
 
     def add_input_module(self, module):
         if module is not None:
-            print(self.input_modules)
-            print(module)
+            # print(self.input_modules)
+            # print(module)
             self.input_modules[module] = LOW
 
     def send(self, pulse, origin):
@@ -139,17 +139,45 @@ def main():
                 configuration_map[module].name
             )
 
+    print("---")
     [print(configuration_map[module]) for module in configuration_map]
+    print("----")
+    first_conf = [list(str(configuration_map[module])) for module in configuration_map]
 
-    # it is the first command
-    command_list = [["", LOW, "broadcaster"]]
-    print()
-    for command in command_list:
-        print(f"Command: {command[0]}->{command[1]}->{command[2]}")
-        module = configuration_map[command[2]]
-        next_commands = module.send(command[1], command[0])
-        print(f"    Next Command {next_commands}")
-        command_list.extend(next_commands)
+    high_x_low_total = 0
+    counter_high_pulses = 0
+    counter_low_pulses = 0
+    press_button = 0
+    for press_button in range(1000):
+        # it is the first command
+        command_list = [["button", LOW, "broadcaster"]]
+        # print()
+        for command in command_list:
+            # print(f"Command: {command[0]}->{command[1]}->{command[2]}")
+            module = configuration_map[command[2]]
+            next_commands = module.send(command[1], command[0])
+
+            if command[1] is HIGH:
+                counter_high_pulses += 1
+            else:
+                counter_low_pulses += 1
+
+            # print(f"    Next Command {next_commands}")
+            command_list.extend(next_commands)
+        #
+        # final_conf = [
+        # list(str(configuration_map[module])) for module in configuration_map
+        # ]
+
+        # if final_conf == first_conf:
+        # print("EQUAAAAAAAL")
+
+    print(f"Pressed {press_button}")
+    print(f"Number High Pulses: {counter_high_pulses}")
+    print(f"Number Low Pulses: {counter_low_pulses}")
+    print(
+        f"Total Signal : {high_x_low_total}  -> {counter_low_pulses * counter_high_pulses}"
+    )
 
 
 if __name__ == "__main__":
