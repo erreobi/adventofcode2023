@@ -142,7 +142,7 @@ def main():
     print("---")
     [print(configuration_map[module]) for module in configuration_map]
     print("----")
-    first_conf = [list(str(configuration_map[module])) for module in configuration_map]
+    # first_conf = [list(str(configuration_map[module])) for module in configuration_map]
 
     high_x_low_total = 0
     counter_high_pulses = 0
