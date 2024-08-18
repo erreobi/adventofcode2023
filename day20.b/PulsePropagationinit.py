@@ -1,4 +1,5 @@
 import sys
+import math
 
 ON = True
 OFF = False
@@ -92,6 +93,9 @@ class Conjunction(Module):
         pulse_to_send = HIGH
         if pulse_to_send_boolean is True:
             pulse_to_send = LOW
+            self.status = OFF
+        else:
+            self.status = ON
 
         commands = []
 
@@ -147,7 +151,12 @@ def main():
     minimal_low_RX = 1000
     counter_high_pulses = 0
     counter_low_pulses = 0
-    press_button = 0
+    press_button = 1
+
+    input_cycle = {"rv": 0, "bt": 0, "dl": 0, "fr": 0}
+    input_cycle_leght = 4
+    input_cycle_touched = 0
+
     # for press_button in range(1000000):
     while True:
         # it is the first command
@@ -158,13 +167,22 @@ def main():
             module = configuration_map[command[2]]
             next_commands = module.send(command[1], command[0])
 
-            if command[2] == "rx" and command[1] is LOW:
-                # ciccio = press_button - minimal_low_RX
-                # if ciccio < minimal_low_RX:
-                # minimal_low_RX = ciccio
-
+            if command[2] == "rs" and command[1] is HIGH:
+                print("AOOOO")
                 print(f"RX->{command}->{press_button}")
-                break
+                last_cycle = input_cycle[command[0]]
+                if last_cycle == 0:
+                    input_cycle[command[0]] = press_button
+                    input_cycle_touched += 1
+
+                print(input_cycle)
+
+            # ciccio = press_button - minimal_low_RX
+            # if ciccio < minimal_low_RX:
+            # minimal_low_RX = ciccio
+
+            # print(f"RX->{command}->{press_button}")
+            # break
 
             # if command[1] is HIGH:
             # counter_high_pulses += 1
@@ -174,6 +192,8 @@ def main():
             # print(f"    Next Command {next_commands}")
             command_list.extend(next_commands)
 
+        if input_cycle_leght == input_cycle_touched:
+            break
         # final_conf = [
         # list(str(configuration_map[module])) for module in configuration_map
         # ]
@@ -181,6 +201,7 @@ def main():
         # if final_conf == first_conf:
         # print("EQUAAAAAAAL")
         press_button += 1
+        # print(f"{press_button}")
 
     print(f"Pressed {press_button}")
     print(f"Number High Pulses: {counter_high_pulses}")
@@ -188,6 +209,12 @@ def main():
     print(
         f"Total Signal : {minimal_low_RX}  -> {counter_low_pulses * counter_high_pulses}"
     )
+
+    lcm = 1
+    for key, value in input_cycle.items():
+        print(value)
+        lcm = math.lcm(lcm, value)
+        print(lcm)
 
 
 if __name__ == "__main__":
