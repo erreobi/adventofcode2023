@@ -1,4 +1,5 @@
 import sys
+import pprint
 
 print("FileName: ", sys.argv[1])
 
@@ -44,7 +45,6 @@ def main():
     # paths_positions_map contain all the position it can reach at each step. At step 0 it start from the S.
     paths_positions_map = []
     # Each element has the starting coordinate, the plan when it is moving and how many time it passed in the same position.
-    path_spatial_coordinate = (center,) + (PLAN_ZERO,)
     path_spatial_coordinate = (center,)
 
     nextposition = {}
@@ -52,7 +52,7 @@ def main():
     paths_positions_map.append(nextposition)
 
     # number_max_step contain the max number of steps.
-    number_max_step = 500
+    number_max_step = 10
 
     # movements contain all the possible move for each steps.
     movements = [UP, DOWN, LEFT, RIGHT]
@@ -73,13 +73,11 @@ def main():
 
         number_of_current_step += 1
         next_path_position = {}
-        check_coordinate = set()
 
         # paths_position is a map of spatial coordinate. The keys are the coordinate and valure is the number of times
         # you can passed over that coordinate.
         for position in paths_positions:
             row, col = position[0]
-            plan_row, plan_col = position[1]
             multiplier = paths_positions[position]
             # print(
             #     f"considering {row} row and {col} coloumn for the plan {plan_row},{plan_col} with multiplier {multiplier}"
@@ -87,49 +85,41 @@ def main():
             for move in movements:
                 new_row = row + move[0]
                 new_col = col + move[1]
-                new_plan_row = plan_row
-                new_plan_col = plan_col
                 new_multiplier = multiplier
+                is_a_new_plan = False
 
                 if new_row < 0:
                     # print("Toward UP Plan")
-                    new_plan_row = plan_row + UP[0]
-                    new_plan_col = plan_col + UP[1]
+                    is_a_new_plan = True
                     new_row = len(gardern_grid) - 1
                 elif new_row >= len(gardern_grid):
                     # print("Toward DOWN Plan")
-                    new_plan_row = plan_row + DOWN[0]
-                    new_plan_col = plan_col + DOWN[1]
+                    is_a_new_plan = True
                     new_row = 0
                 if new_col < 0:
                     # print("Toward LEFT Plan")
-                    new_plan_row = plan_row + LEFT[0]
-                    new_plan_col = plan_col + LEFT[1]
+                    is_a_new_plan = True
                     new_col = len(gardern_grid[0]) - 1
                 elif new_col >= len(gardern_grid[0]):
                     # print("Toward RIGHT Plan")
-                    new_plan_row = plan_row + RIGHT[0]
-                    new_plan_col = plan_col + RIGHT[1]
+                    is_a_new_plan = True
                     new_col = 0
 
-                # print(
-                # f"NEW position {new_row} row and {new_col} coloumn for the plan {new_plan_row},{new_plan_col}"
-                # )
+                # print(f"NEW position ({new_row},{new_col}) - new_plan? {is_a_new_plan}")
 
                 if gardern_grid[new_row][new_col] == "#":
                     continue
 
-                next_spatial_position = (
-                    (new_row, new_col),
-                    (new_plan_row, new_plan_col),
-                )
+                next_spatial_position = ((new_row, new_col),)
 
-                if next_spatial_position in next_path_position:
-                    # print(f"Passing Over {len(check_coordinate)}")
+                if next_spatial_position in next_path_position and is_a_new_plan:
+                    # print(
+                    #     f"Update { next_path_position[next_spatial_position] + 1     }"
+                    # )
                     new_multiplier = next_path_position[next_spatial_position] + 1
-                # print(f"{next_spatial_position}")
 
                 next_path_position[next_spatial_position] = new_multiplier
+                stampa2(next_path_position, gardern_grid)
 
         paths_positions_map.append(next_path_position)
 
@@ -140,9 +130,7 @@ def main():
     for element in last_step_position:
         tot += last_step_position[element]
 
-    print(
-        f"garden plots you can reach are {len(paths_positions_map[number_of_current_step])}"
-    )
+    print(f"garden plots you can reach are {tot}")
 
 
 def matrix_deep_copy(gardern_grid):
@@ -153,6 +141,21 @@ def matrix_deep_copy(gardern_grid):
         for col_index, element in enumerate(row_list):
             gardern_grid_copy[row_index][col_index] = element
     return gardern_grid_copy
+
+
+def stampa2(paths_positions, gardern_grid):
+    print("----")
+    gardern_grid_copy = matrix_deep_copy(gardern_grid)
+    # print(paths_positions_map[number_of_current_step])
+    for element in paths_positions:
+        gardern_grid_copy[element[0][0]][element[0][1]] = paths_positions[element]
+
+    for row_index, row_list in enumerate(gardern_grid_copy):
+        for col_index, element in enumerate(row_list):
+            print(element, end="")
+        print()
+
+    print("----")
 
 
 def stampa(paths_positions, gardern_grid):
